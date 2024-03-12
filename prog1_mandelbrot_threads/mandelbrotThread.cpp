@@ -33,16 +33,10 @@ void* workerThreadStart(void* threadArgs) {
 
     // TODO: Implement worker thread here.
 
-    int numRows = args->height / args->numThreads;
-    int remainder = args->height % args->numThreads;
-
-    if (args->threadId < remainder) {
-        int startRow = args->threadId * (numRows + 1);
-        mandelbrotSerial(args->x0, args->y0, args->x1, args->y1, args->width, args->height, startRow, numRows + 1, args->maxIterations, args->output);
-    }
-    else {
-        int startRow = args->threadId * numRows + remainder;
-        mandelbrotSerial(args->x0, args->y0, args->x1, args->y1, args->width, args->height, startRow, numRows, args->maxIterations, args->output);
+    uint startRow = args->threadId;
+    while (startRow < args->height) {
+        mandelbrotSerial(args->x0, args->y0, args->x1, args->y1, args->width, args->height, startRow, 1, args->maxIterations, args->output);
+        startRow += args->numThreads;
     }
 
     return NULL;
